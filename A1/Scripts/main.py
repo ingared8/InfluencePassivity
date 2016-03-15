@@ -9,7 +9,7 @@ from ReadGraphFile import *
 
 # The main script to run any Influence Passivity values of the network
 
-class InfluencePassivityValues():
+class InfluencePassivity():
 
     # -- Graph
     g = None
@@ -37,12 +37,10 @@ class InfluencePassivityValues():
         :param filename: filename in which data is present
         :param directional: Boolean -- Whether Graph is directed (True) or not (False)
         :param weight: Boolean -- Weights for edges are present (True) or not present ( False)
-        :return: None as its a constructor
+        :return: None ( this is simply constructor)
         """
 
         # Create Graph from file
-
-
         self.g =  readGraphfromFile(filename=filename, directional= directional, weight=weight)
         self.weight = weight
 
@@ -145,6 +143,8 @@ class InfluencePassivityValues():
         """
         :return:
         """
+        # TODO ( Write up for function)
+
         I = {}
         for node in self.g.nodes():
             weight = 0.0
@@ -158,6 +158,8 @@ class InfluencePassivityValues():
 
         :return:
         """
+        # TODO ( Write up for function)
+
         P = {}
         for node in self.g.nodes():
             weight = 0.0
@@ -168,10 +170,10 @@ class InfluencePassivityValues():
 
 
     def InfluencePassivityAlgorithm(self, m= 100):
-
         """
         :return:
         """
+        # TODO ( Write up for function)
 
         for node in self.g.nodes():
             self.P[node] = 1
@@ -182,7 +184,7 @@ class InfluencePassivityValues():
         errorLimit = 0.01
         Ierror = 0.0
         Perror = 0.0
-        while ( (iter < m) & (error < errorLimit)):
+        while ( (iter < m) & (error > errorLimit)):
             I = self.detInfluenceValues(self.P)
             P = self.detPassivityValues(self.I)
             sumI = np.sum(I.values()) + 0.0
@@ -192,7 +194,38 @@ class InfluencePassivityValues():
                 pvalue = P[node]/(sumP)
                 Ierror += abs(ivalue - self.I[node])
                 Perror += abs(pvalue - self.P[node])
-                self.I[node] = I[node]/(sumI)
-                self.P[node] = P[node]/(sumP)
+                self.I[node] = ivalue
+                self.P[node] = pvalue
                 error = (Ierror/sumI) + (Perror/sumP)
             iter += 1
+
+
+    def run(self):
+        """
+
+        :return:
+        """
+        # TODO (function description)
+
+        self.detCumulativeAcceptanceValues()
+        self.detAcceptanceRateValues()
+
+        self.detCumulativeRejectanceValues()
+        self.detRejectanceRateValues()
+
+        self.InfluencePassivityAlgorithm(m= 5)
+
+
+    # TODO (stats function to determine the highest Influence/Passivity Values)
+
+
+
+if __name__ == '__main__':
+    print "Main"
+
+    filename = "A1/Data/gnutella/p2p-Gnutella08.txt"
+    ip = InfluencePassivity(filename)
+    ip.run()
+
+    print ip.I
+    print ip.P
