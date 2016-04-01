@@ -4,6 +4,7 @@ import networkx as nx
 import os
 import numpy as np
 import re
+from pylab import plot,show
 
 from ReadGraphFile import *
 
@@ -184,6 +185,10 @@ class InfluencePassivity():
         errorLimit = 0.01
         Ierror = 0.0
         Perror = 0.0
+        Errors = []
+        PErrors = []
+        IErrors = []
+        iters = []
         while ( (iter < m) & (error > errorLimit)):
             I = self.detInfluenceValues(self.P)
             P = self.detPassivityValues(self.I)
@@ -196,9 +201,17 @@ class InfluencePassivity():
                 Perror += abs(pvalue - self.P[node])
                 self.I[node] = ivalue
                 self.P[node] = pvalue
-                error = (Ierror/sumI) + (Perror/sumP)
+            error = (Ierror/sumI) + (Perror/sumP)
+            Errors.append(error)
+            PErrors.append((Perror/sumP))
+            IErrors.append((Ierror/sumI))
+            iters.append(iter)
             iter += 1
-
+            print "iter " , iter
+        plot(iters,Errors,'r')
+        plot(iters,PErrors,'b*')
+        plot(iters,IErrors,'g.')
+        show()
 
     def run(self):
         """
@@ -210,22 +223,32 @@ class InfluencePassivity():
         self.detCumulativeAcceptanceValues()
         self.detAcceptanceRateValues()
 
+        print "Calculating Acceptance Values"
+
         self.detCumulativeRejectanceValues()
         self.detRejectanceRateValues()
 
-        self.InfluencePassivityAlgorithm(m= 5)
+        print "Calculated Rejectance Values"
 
+        self.InfluencePassivityAlgorithm()
 
     # TODO (stats function to determine the highest Influence/Passivity Values)
 
-
+    def sunoftwonumbers(self,a,b):
+        return (a+b)
 
 if __name__ == '__main__':
-    print "Main"
 
+    print "Main"
     filename = "A1/Data/gnutella/p2p-Gnutella08.txt"
     ip = InfluencePassivity(filename)
     ip.run()
 
     print ip.I
     print ip.P
+    print np.sum(ip.I.values())
+    print np.sum(ip.P.values())
+
+    a = 100
+    b = 200
+    print "Sum is" ,ip.sunoftwonumbers(a,b)
