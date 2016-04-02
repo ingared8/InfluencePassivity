@@ -1,5 +1,8 @@
 __author__ = "ingared"
 
+import networkx as nx
+
+
 class MuLet():
 
     """"
@@ -14,6 +17,12 @@ class MuLet():
     A = {}
     NormA = {}
 
+    # Delta Refers to inter layer connections
+    # Star refers to intra layer connections
+
+    A_delta = {}
+    NormA_delta = {}
+
     A_star = {}
     NormA_star = {}
 
@@ -21,17 +30,20 @@ class MuLet():
     R = {}
     NormR = {}
 
+    R_delta = {}
+    NormR_delta = {}
+
     R_star = {}
     NormR_star = {}
 
     # Influeence Scores
     I = {}
-    NormI = {}
 
     # Passivity Scores
     P = {}
-    NormP = {}
 
+    #Graph
+    g = None
 
 
     def __init__(self,layers = None, weights = None):
@@ -46,17 +58,46 @@ class MuLet():
         if weights is not None:
             self.weights = weights
 
+        self.getGenericGraphfromLayers()
+
+    def getGenericGraphfromLayers(self):
+
+        """
+        Generate a graph which covers every node of the multi layers
+        :return:
+        """
+        self.g = nx.DiGraph()
+
+        for graph in self.layers:
+            for node in graph.nodes():
+                if not (self.g.has_node(node)):
+                    self.g.add_node(node)
+                else:
+                    pass
+
+
     def detCumulativeIntraLayerAcceptance(self,):
 
         """
         Determine the cumulative Acceptance (A)
 
-        A = ( A + A*)
+        A = ( A_delta + A_star)
 
         A -- Corresponsds to
 
         :return:
         """
+
+        # TODO update self.A_Delta
+
+    def detCumulativeInterLayerAcceptance(self):
+
+        """
+
+        A* = Corresponds to Inter layer weight matrices.
+        :return:
+        """
+
 
     def detCumulativeAcceptance(self,):
 
@@ -69,27 +110,8 @@ class MuLet():
 
         :return:
         """
+        # TODO update self.A
 
-    def detCumulativeRejectance(self,):
-
-        """
-        Determine the cumulative Acceptance (A)
-
-        A = ( A + A*)
-
-        A -- Corresponsds to
-
-        :return:
-        """
-
-
-    def detCumulativeInterLayerAcceptance(self):
-
-        """
-
-        A* = Corresponds to Inter layer weight matrices.
-        :return:
-        """
 
     def detCumulativeIntraLayerRejectance(self):
 
@@ -101,6 +123,9 @@ class MuLet():
         :return:
         """
 
+        # TODO update self.R_delta
+
+
     def detCumulativeInterLayerRejectance(self):
 
         """
@@ -109,13 +134,17 @@ class MuLet():
         :return:
         """
 
+        # TODO update self.R_star
 
-    def detCumulativeIP(self):
+
+    def detCumulativeRejectance(self,):
 
         """
+        Determine the cumulative Rejectance (R)
+
+        R = ( R_delta + R_star)
 
         :return:
         """
 
-        # TODO ( write functionality)
-        pass
+        # TODO upate self.R
