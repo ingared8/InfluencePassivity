@@ -23,7 +23,6 @@ if __name__ == '__main__':
 
 
     ip.run()
-
     print ip.I
     print ip.P
     print np.sum(ip.I.values())

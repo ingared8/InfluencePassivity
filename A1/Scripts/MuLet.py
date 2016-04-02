@@ -68,8 +68,8 @@ class MuLet():
         """
         self.g = nx.DiGraph()
 
-        for graph in self.layers:
-            for node in graph.nodes():
+        for layer in self.layers:
+            for node in layer.g.nodes():
                 if not (self.g.has_node(node)):
                     self.g.add_node(node)
                 else:
