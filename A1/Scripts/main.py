@@ -14,13 +14,14 @@ from IP import *
 if __name__ == '__main__':
 
     print "Main"
+
     filename = "/home/ingared/Documents/NS_IP/A1/Data/gnutella/p2p-Gnutella08.txt"
-    ip = InfluencePassivity(filename)
+    filename1 = "/home/ingared/Documents/NS_IP/A1/Data/gnutella/Random.txt"
 
-    G = get_NY_UndergoundGraph()
-    ip.modifyGraph(G)
+    ip = InfluencePassivity(filename1, weight=True)
 
-
+    #G = get_NY_UndergoundGraph()
+    #ip.modifyGraph(G)
 
     ip.run()
     print ip.I

@@ -2,7 +2,6 @@ __author__ = "ingared"
 
 import networkx as nx
 
-
 class MuLet():
 
     """"
@@ -66,7 +65,7 @@ class MuLet():
         Generate a graph which covers every node of the multi layers
         :return:
         """
-        self.g = nx.DiGraph()
+        self.g = nx.MultiDiGraph()
 
         for layer in self.layers:
             for node in layer.g.nodes():
@@ -75,8 +74,46 @@ class MuLet():
                 else:
                     pass
 
+        # Defaulting all values of A and R to floating zeroes
+        for layer in self.layers:
+            for edge in layer.g.edges_iter():
+                key = edge[0] + "_" + edge[1]
+                self.A_delta[key] = 0.0
+                self.A_star[key]= 0.0
+                self.R_delta[key] = 0.0
+                self.R_star[key]  = 0.0
+                self.A[key] = 0.0
+                self.R[key] = 0.0
+                self.NormA[edge[0]]= 0.0
+                self.NormR[edge[0]] = 0.0
+                self.NormA[edge[1]] = 0.0
+                self.NormR[edge[1]] = 0.0
 
-    def detCumulativeIntraLayerAcceptance(self,):
+    def updateCumulativeAcceptance(self):
+
+        """
+        Update the total acceptance from i
+        as A is column stochastic matrix
+        :return:
+        """
+        for layer in self.layers:
+            for key,value in layer.NormA.iteritems():
+                self.NormA[key] += value
+
+
+    def updateCumulativeRejectance(self):
+
+        """
+        Update the cumulative rejectance of multi layer network
+        as R is row stochastic matrix
+        :return:
+        """
+
+        for layer in self.layers:
+            for key,value in layer.NormR.iteritems():
+                self.NormR[key] += value
+
+    def detCumulativeIntraLayerAcceptance(self):
 
         """
         Determine the cumulative Acceptance (A)
@@ -90,6 +127,11 @@ class MuLet():
 
         # TODO update self.A_Delta
 
+
+        for layer in self.layers:
+            for key,value in layer.A.iteritems():
+                self.A_delta[key] += value/( 0.0 +self.NormA[key.split('-')[-1]])
+
     def detCumulativeInterLayerAcceptance(self):
 
         """
@@ -98,6 +140,7 @@ class MuLet():
         :return:
         """
 
+        # TODO update self.A_star
 
     def detCumulativeAcceptance(self,):
 
@@ -118,13 +161,12 @@ class MuLet():
         """
 
         Determine (R) -- the effective Rejectance based on intra Layer weights.
-
-
         :return:
         """
 
-        # TODO update self.R_delta
-
+        for layer in self.layers:
+            for key,value in layer.R.iteritems():
+                self.R_delta[key] += value/(0.0 + self.NormR[key.split('-')[0]])
 
     def detCumulativeInterLayerRejectance(self):
 

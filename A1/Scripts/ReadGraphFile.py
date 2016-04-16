@@ -11,6 +11,9 @@ from dbfread import DBF
 def splitLine (line):
     return re.sub("[^\w]", " ",  line).split()
 
+def splitLine1(line):
+    return line.strip().split('\t')
+
 def readGraphfromFile(filename, delimiter = "#", weight = False, directional = True):
     """
     Generates a graph from data present in a file
@@ -32,14 +35,17 @@ def readGraphfromFile(filename, delimiter = "#", weight = False, directional = T
             if (line[0] == delimiter):
                 pass
             else:
-                vals = splitLine(line)
+                #vals = splitLine(line)
+                print line
+                vals = line.strip().split(',')
+                print vals, len(vals)
                 # Check if node is present in graph
                 if ( not g.has_node(vals[0])):
                     g.add_node(vals[0])
                 if ( not g.has_node(vals[1])):
                     g.add_node(vals[1])
                 if ((len(vals) > 2) & weight):
-                    weight_value = vals[2]
+                    weight_value = float(vals[2])
                 else:
                     weight_value = 1
                 g.add_weighted_edges_from([(vals[0],vals[1], weight_value)], color = 'red')
@@ -49,7 +55,6 @@ def readGraphfromFile(filename, delimiter = "#", weight = False, directional = T
     f.close()
     print "File Reading Completed"
     return g
-
 
 def get_NY_StreetsGraph():
 
@@ -85,9 +90,7 @@ def get_NY_StreetsGraph():
     print '\n'
     print " Total Edges in Streets  : " , count
     print '\n'
-
     return g
-
 
 def get_NY_UndergoundGraph():
 

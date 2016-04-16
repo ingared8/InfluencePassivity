@@ -150,7 +150,7 @@ class InfluencePassivity():
         for node in self.g.nodes():
             weight = 0.0
             for edge in self.g.out_edges(node):
-                weight += self.A[edge[0]+"-"+edge[1]]*P[node]
+                weight += self.A[edge[0]+"-"+edge[1]]*P[edge[1]]
             I[node] = weight
         return I
 
@@ -165,7 +165,7 @@ class InfluencePassivity():
         for node in self.g.nodes():
             weight = 0.0
             for edge in self.g.in_edges(node):
-                weight += self.R[edge[0]+"-"+edge[1]]*I[node]
+                weight += self.R[edge[0]+"-"+edge[1]]*I[edge[0]]
             P[node] = weight
         return P
 
