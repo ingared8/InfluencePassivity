@@ -66,11 +66,8 @@ class InfluencePassivity():
                 WeightedSum = 0.0
                 for edge in self.g.in_edges(nodej):
                     weight = self.g.get_edge_data(edge[0],edge[1])
-                    print weight
-                    print weight.get('weight')
                     WeightedSum += weight.get('weight')
                 self.NormA[nodej] = WeightedSum
-
 
     def detAcceptanceRateValues(self):
         """
@@ -207,7 +204,8 @@ class InfluencePassivity():
             IErrors.append((Ierror/sumI))
             iters.append(iter)
             iter += 1
-            print "iter " , iter
+            if (iter%100 == 0):
+                print "iter " , iter
         plot(iters,Errors,'r')
         plot(iters,PErrors,'b*')
         plot(iters,IErrors,'g.')
@@ -231,5 +229,15 @@ class InfluencePassivity():
         print "Calculated Rejectance Values"
 
         self.InfluencePassivityAlgorithm()
+
+    def prepare(self):
+        """
+        Calculate the Acceptance and Rejectance Matrix
+        :return:
+        """
+        self.detCumulativeAcceptanceValues()
+        self.detAcceptanceRateValues()
+        self.detCumulativeRejectanceValues()
+        self.detRejectanceRateValues()
 
     # TODO (stats function to determine the highest Influence/Passivity Values)

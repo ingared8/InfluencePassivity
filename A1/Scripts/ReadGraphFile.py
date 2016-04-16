@@ -36,9 +36,9 @@ def readGraphfromFile(filename, delimiter = "#", weight = False, directional = T
                 pass
             else:
                 #vals = splitLine(line)
-                print line
+                #print line
                 vals = line.strip().split(',')
-                print vals, len(vals)
+                #print vals, len(vals)
                 # Check if node is present in graph
                 if ( not g.has_node(vals[0])):
                     g.add_node(vals[0])

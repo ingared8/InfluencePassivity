@@ -1,6 +1,7 @@
 __author__ = "ingared"
 
 import networkx as nx
+from IP import InfluencePassivity
 
 class MuLet():
 
@@ -56,6 +57,15 @@ class MuLet():
              self.layers = layers
         if weights is not None:
             self.weights = weights
+
+        #self.getGenericGraphfromLayers()
+
+    def update(self):
+
+        filenames = ["/home/ingared/Documents/NS_IP/A1/Data/gnutella/Random2.txt", "/home/ingared/Documents/NS_IP/A1/Data/gnutella/Random3.txt"]
+        self.layers = []
+        for filename in filenames:
+            self.layers.append(InfluencePassivity(filename,weight=True))
 
         self.getGenericGraphfromLayers()
 
