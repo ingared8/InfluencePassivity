@@ -7,7 +7,6 @@ import re
 from pylab import plot,show
 from MyMulet2 import *
 from ReadGraphFile import *
-from IP import *
 
 # The main script to run any Influence Passivity values of the network
 
