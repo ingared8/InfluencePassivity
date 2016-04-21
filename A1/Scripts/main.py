@@ -7,6 +7,7 @@ import re
 from pylab import plot,show
 
 from IP import InfluencePassivity
+from PageRank import PageRank
 from MuLet import MuLet
 
 # The main script to run any Influence Passivity values of the network
@@ -26,11 +27,15 @@ if __name__ == '__main__':
 
     filename1 = "/home/ingared/Documents/NS_IP/A1/Data/gnutella/Random.txt"
     ip1 = InfluencePassivity(filename1, weight=True)
-    ip1.prepare()
+    ip1.run()
     print ip1.I
     print ip1.P
     print np.sum(ip1.I.values())
     print np.sum(ip1.P.values())
 
-    m = MuLet()
-    m.update()
+    #m = MuLet()
+    #m.update()
+
+    pr = PageRank(filename2,directional=True)
+    pr.pageRankAlgorithm(m=10)
+

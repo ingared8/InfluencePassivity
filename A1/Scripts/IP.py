@@ -167,7 +167,7 @@ class InfluencePassivity():
         return P
 
 
-    def InfluencePassivityAlgorithm(self, m= 100):
+    def InfluencePassivityAlgorithm(self, m= 10):
         """
         :return:
         """
@@ -204,8 +204,8 @@ class InfluencePassivity():
             IErrors.append((Ierror/sumI))
             iters.append(iter)
             iter += 1
-            if (iter%100 == 0):
-                print "iter " , iter
+            if (iter%1 == 0):
+                 print "iter " , iter, "I Sum ", sumI, 'P sum', sumP , self.I.values(), self.P.values()
         plot(iters,Errors,'r')
         plot(iters,PErrors,'b*')
         plot(iters,IErrors,'g.')
