@@ -18,18 +18,13 @@ if __name__ == '__main__':
     ip1 = InfluencePassivity(filename)
     ip1.run()
     Ips.append(ip1)
-    print("going to street network")
-    # Acceptance Ratio
     filename = "/Users/rashmijrao/Documents/IP-master/A1/Scripts2/layer_2.txt"
     ip2 = InfluencePassivity(filename)
     ip2.run()
     Ips.append(ip2)
     #G2 = get_NY_StreetsGraph()
     #ip2.modifyGraph(G2)    
-    #print ("check Street I:::", sum(ip2.I.values()))
-    #print ("check Street P:::", sum(ip2.P.values()))
-    
-    
+
     filename = "/Users/rashmijrao/Documents/IP-master/A1/Scripts2/layer_3.txt"
     ip3 = InfluencePassivity(filename)
     ip3.run()
