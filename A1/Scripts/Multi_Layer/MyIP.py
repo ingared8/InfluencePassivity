@@ -66,8 +66,6 @@ class InfluencePassivity():
                 WeightedSum = 0.0
                 for edge in self.g.in_edges(nodej):
                     weight = self.g.get_edge_data(edge[0],edge[1])
-                    #print (weight)
-                    #print (weight.get('weight'))
                     WeightedSum += weight.get('weight')
                 self.NormA[nodej] = WeightedSum
 
@@ -145,17 +143,14 @@ class InfluencePassivity():
         :return:
         """
         # TODO ( Write up for function)
-
         I = {}
         for node in self.g.nodes():
             weight = 0.0
-            print (str(self.g.out_edges(node)))
+            #print (str(self.g.out_edges(node)))
             for edge in self.g.out_edges(node):
-                weight += self.A[str(edge[0])+"-"+str(edge[1])]*P[node]
-            print("Assigning weights:::",weight)
+                if str(edge[0])+"-"+str(edge[1])  in self.A:
+                    weight += self.A[str(edge[0])+"-"+str(edge[1])]*P[edge[1]]
             I[node] = weight
-        #print ("A vals:::",str(self.A.values()))
-        #print (sum(I.values()))
         return I
 
     def detPassivityValues(self,I):
@@ -169,7 +164,8 @@ class InfluencePassivity():
         for node in self.g.nodes():
             weight = 0.0
             for edge in self.g.in_edges(node):
-                weight += self.R[str(edge[0])+"-"+str(edge[1])]*I[node]
+                if str(edge[0])+"-"+str(edge[1]) in self.R:
+                    weight += self.R[str(edge[0])+"-"+str(edge[1])]*I[edge[0]]
             P[node] = weight
         return P
 
@@ -180,11 +176,10 @@ class InfluencePassivity():
         """
         # TODO ( Write up for function)
         if mygraph is not None:
+            self.g = nx.MultiDiGraph()
             self.g=mygraph
-        print("mygraph::",str(mygraph))
         if Avals is not None:
             self.A=Avals
-            #print ("Avals:::", Avals)
         if Rvals is not None:
             self.R=Rvals
         for node in self.g.nodes():
@@ -205,9 +200,6 @@ class InfluencePassivity():
             P = self.detPassivityValues(self.I)
             sumI = (sum(I.values()))
             sumP = (sum(P.values()))
-
-            print ("SumI:::",sumI)
-            print ("SumP:::",sumP)
 
             for node in self.g.nodes():
                 if sumI!=0:
@@ -235,11 +227,12 @@ class InfluencePassivity():
             IErrors.append((Ierror/sumI))
             iters.append(iter)
             iter += 1
-            #print ("iter " , iter)
         print("Done with InfluencePassivityAlgorithm")
         plot(iters,Errors,'r')
         plot(iters,PErrors,'b*')
         plot(iters,IErrors,'g.')
+        print ("Influence:::::",self.I)
+        print ("Passivity:::::",self.P)
         show()
 
     def run(self):
@@ -259,6 +252,6 @@ class InfluencePassivity():
 
         print ("Calculated Rejectance Values")
 
-        self.InfluencePassivityAlgorithm()
+        #self.InfluencePassivityAlgorithm()
 
     # TODO (stats function to determine the highest Influence/Passivity Values)
