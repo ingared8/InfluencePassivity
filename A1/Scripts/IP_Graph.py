@@ -24,7 +24,7 @@ def generate_graph_data(layers,nodes):
 				layer.write(str(j) + "," + str(k) + "," + str(weight[0]) + '\n')
 				all_layers_data.write(str(j) + "," + str(k) + "," + str(weight[0]) + '\n')
 
-	layer.close()
+		layer.close()
 
 	#Inter_layer
 
@@ -46,7 +46,7 @@ def generate_graph_data(layers,nodes):
 				inter_layer.write(str(j) + "," + str(k) + "," + str(weight) + '\n')
 				all_layers_data.write(str(j) + "," + str(k) + "," + str(weight) + '\n')
 
-	inter_layer.close()
+		inter_layer.close()
 
 
 def arena_3d(layers):
@@ -78,4 +78,4 @@ def arena_3d(layers):
 	arena_file.close()
 
 generate_graph_data(6,20)
-arena_3d(6)
+#arena_3d(6)

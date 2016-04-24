@@ -130,7 +130,8 @@ class PageRank():
             iters.append(iter)
             iter += 1
             if (iter%1 == 0):
-                print "iter " , iter, "Asum ", sum_aa, 'H sum', sum_hh , self.a.values(), "h", self.h.values()
+                #print "iter " , iter, "Asum ", sum_aa, 'H sum', sum_hh , self.a.values(), "h", self.h.values()
+                pass
         plot(iters,Errors,'r')
         plot(iters,aErrors,'b*')
         plot(iters,hErrors,'g.')
