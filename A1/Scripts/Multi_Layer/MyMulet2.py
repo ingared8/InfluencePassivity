@@ -1,7 +1,9 @@
 __author__ = "ingared"
 
 import networkx as nx
+import json
 from MyIP import *
+from PageRank import *
 class MyMuLet2():
 
     """"
@@ -59,17 +61,37 @@ class MyMuLet2():
             self.weights = weights
         if interLayers is not None:
             self.interLayers=interLayers
-
         self.getGenericGraphfromLayers()
-        self.updateCumulativeAcceptance()
-        self.updateCumulativeRejectance()
         self.detCumulativeIntraLayerAcceptance()
+        self.updateCumulativeAcceptance()
+
         self.detCumulativeInterLayerAcceptance()
         self.detCumulativeIntraLayerRejectance()
+        self.updateCumulativeRejectance()
+
         self.detCumulativeInterLayerRejectance()
         finIp=InfluencePassivity(filename=None)
+
         finIp.InfluencePassivityAlgorithm(mygraph=self.g,Avals=self.A_delta,Rvals=self.R_delta)
-        
+        with open('/Users/rashmijrao/Documents/IP-master/A1/Scripts2/NS_Final/Influences.json', 'w') as outfile:
+            json.dump(finIp.I, outfile)
+        with open('/Users/rashmijrao/Documents/IP-master/A1/Scripts2/NS_Final/Passivities.json', 'w') as outfile:
+            json.dump(finIp.P, outfile)
+
+        print('Sum I:::',str(max((finIp.I.values()))))
+        print('Sum P:::',str(max((finIp.P.values()))))
+
+        pr = PageRank( directional=True)
+        pr.modifyGraph(self.g)
+        pr.pageRankAlgorithm(m=10)
+
+        with open('/Users/rashmijrao/Documents/IP-master/A1/Scripts2/NS_Final/Authority.json', 'w') as outfile:
+            json.dump(pr.a, outfile)
+        with open('/Users/rashmijrao/Documents/IP-master/A1/Scripts2/NS_Final/Hub.json', 'w') as outfile:
+            json.dump(pr.h, outfile)
+
+        print ('pagerank a:::',max(pr.a.values()))
+        print ('pagerank h:::',max(pr.h.values()))
 
     def getGenericGraphfromLayers(self):
 
@@ -125,11 +147,18 @@ class MyMuLet2():
         """
         for layer in self.layers:
             for key,value in layer.NormA.items():
-                self.NormA[key] += value
+                if key in self.NormA:
+                    self.NormA[key] += value
+                else:
+                    self.NormA[key] = value
 
         for layer in self.interLayers:
             for key, value in layer.NormA.items():
-                self.NormA[key] += value
+                if key in self.NormA:
+                    self.NormA[key] += value
+                else:
+
+                    self.NormA[key] = value
 
     def updateCumulativeRejectance(self):
 
@@ -141,11 +170,18 @@ class MyMuLet2():
 
         for layer in self.layers:
             for key,value in layer.NormR.items():
-                self.NormR[key] += value
+                if key in self.NormR:
+                    self.NormR[key] += value
+                else:
+                    self.NormR[key] = value
 
         for layer in self.interLayers:
             for key, value in layer.NormR.items():
-                self.NormR[key] += value
+                if key in self.NormR:
+                    self.NormR[key] += value
+                else:
+
+                    self.NormR[key] = value
 
     def detCumulativeIntraLayerAcceptance(self):
 
@@ -164,12 +200,15 @@ class MyMuLet2():
         for layer in self.layers:
             for key,value in layer.A.items():
                 if key in self.A_delta:
-                    if(self.NormA[key.split('-')[-1]] != 0):
+                    if key.split('-')[-1] in self.NormA:
+                        if(self.NormA[key.split('-')[-1]] != 0):
 
-                        self.A_delta[key] += value/( 0.0 +self.NormA[key.split('-')[-1]])
+                            self.A_delta[key] += value/( 0.0 +self.NormA[key.split('-')[-1]])
 
+                        else:
+                            self.A_delta[key] += value
                     else:
-                        self.A_delta[key] += value
+                        self.NormA[key.split('-')[-1]]=0
 
                 else:
 
@@ -189,12 +228,16 @@ class MyMuLet2():
         for layer in self.interLayers:
             for key,value in layer.A.items():
                 if key in self.A_delta:
-                    if (self.NormA[key.split('-')[-1]] != 0):
+                    if key.split('-')[-1] in self.NormA:
 
-                        self.A_delta[key] += value / (0.0 + self.NormA[key.split('-')[-1]])
+                        if (self.NormA[key.split('-')[-1]] != 0):
 
+                            self.A_delta[key] += value / (0.0 + self.NormA[key.split('-')[-1]])
+
+                        else:
+                            self.A_delta[key] += value
                     else:
-                        self.A_delta[key] += value
+                        self.NormA[key.split('-')[-1]] = 0
 
                 else:
 
@@ -227,12 +270,16 @@ class MyMuLet2():
         for layer in self.layers:
             for key,value in layer.R.items():
                 if key in self.R_delta:
-                    if (self.NormR[key.split('-')[-1]] != 0):
+                    if key.split('-')[-1] in self.NormR:
 
-                        self.R_delta[key] += value / (0.0 + self.NormR[key.split('-')[-1]])
+                        if (self.NormR[key.split('-')[-1]] != 0):
 
+                            self.R_delta[key] += value / (0.0 + self.NormR[key.split('-')[-1]])
+
+                        else:
+                            self.R_delta[key] += value
                     else:
-                        self.R_delta[key] += value
+                        self.NormR[key.split('-')[-1]] = 0
 
                 else:
 
@@ -250,12 +297,16 @@ class MyMuLet2():
         for layer in self.interLayers:
             for key,value in layer.R.items():
                 if key in self.R_delta:
-                    if (self.NormR[key.split('-')[-1]] != 0):
+                    if key.split('-')[-1] in self.NormR:
 
-                        self.R_delta[key] += value / (0.0 + self.NormR[key.split('-')[-1]])
+                        if (self.NormR[key.split('-')[-1]] != 0):
 
+                            self.R_delta[key] += value / (0.0 + self.NormR[key.split('-')[-1]])
+
+                        else:
+                            self.R_delta[key] += value
                     else:
-                        self.R_delta[key] += value
+                        self.NormR[key.split('-')[-1]] = 0
 
                 else:
 
