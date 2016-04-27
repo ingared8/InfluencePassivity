@@ -89,7 +89,10 @@ class InfluencePassivity():
         else:
             for nodej in self.g.nodes():
                 for edge in self.g.in_edges(nodej):
-                    self.A[str(edge[0]) + "-"+str(edge[1])] = (self.g.get_edge_data(edge[0],edge[1]).get('weight') + 0.0)/self.NormA[nodej]
+                    if (self.NormA[nodej] == 0):
+                        self.A[edge[0] + "-"+edge[1]] = 0
+                    else:
+                        self.A[edge[0] + "-"+edge[1]] = (self.g.get_edge_data(edge[0],edge[1]).get('weight') + 0.0)/self.NormA[nodej]
 
 
     def detCumulativeRejectanceValues(self):
@@ -135,7 +138,10 @@ class InfluencePassivity():
         else:
             for nodej in self.g.nodes():
                 for edge in self.g.out_edges(nodej):
-                    self.R[str(edge[0]) + "-"+str(edge[1])] = (1.0 - self.g.get_edge_data(edge[0],edge[1]).get('weight') )/self.NormR[nodej]
+                    if (self.NormR[nodej] == 0):
+                        self.R[edge[0] + "-" + edge[1]] = 0
+                    else:
+                        self.R[edge[0] + "-" + edge[1]] = (1.0 - self.g.get_edge_data(edge[0],edge[1]).get('weight') )/self.NormR[nodej]
 
     def detInfluenceValues(self,P):
 
@@ -170,7 +176,7 @@ class InfluencePassivity():
         return P
 
 
-    def InfluencePassivityAlgorithm(self, mygraph=None,Avals=None, Rvals=None, m= 100):
+    def InfluencePassivityAlgorithm(self, mygraph=None,Avals=None, Rvals=None, m= 10):
         """
         :return:
         """
@@ -202,14 +208,8 @@ class InfluencePassivity():
             sumP = (sum(P.values()))
 
             for node in self.g.nodes():
-                if sumI!=0:
-                    ivalue = I[node]/(sumI)
-                else:
-                    ivalue=0
-                if sumP !=0:
-                    pvalue = P[node]/(sumP)
-                else:
-                    pvalue=0
+                ivalue = I[node] / (sumI)
+                pvalue = P[node]/(sumP)
                 Ierror += abs(ivalue - self.I[node])
                 Perror += abs(pvalue - self.P[node])
                 self.I[node] = ivalue
@@ -235,6 +235,17 @@ class InfluencePassivity():
         print ("Passivity:::::",self.P)
         show()
 
+    def prepare(self):		        #self.InfluencePassivityAlgorithm()
+        """
+        Calculate the Acceptance and Rejectance Matrix
+        :return:
+        """
+        self.detCumulativeAcceptanceValues()
+        self.detAcceptanceRateValues()
+        self.detCumulativeRejectanceValues()
+        self.detRejectanceRateValues()
+
+
     def run(self):
         """
 
@@ -252,6 +263,42 @@ class InfluencePassivity():
 
         print ("Calculated Rejectance Values")
 
-        #self.InfluencePassivityAlgorithm()
+    def prepare(self):
+            """
+            Calculate the Acceptance and Rejectance Matrix
+            :return:
+            """
+            self.detCumulativeAcceptanceValues()
+            self.detAcceptanceRateValues()
+            self.detCumulativeRejectanceValues()
+            self.detRejectanceRateValues()
 
+        #self.InfluencePassivityAlgorithm()
+    def printGraph(self):
+
+            for node in self.g.nodes():
+                print (node)
+                for edge in self.g.out_edges(node):
+                    print (edge, self.g.get_edge_data(edge[0], edge[1]).get('weight'), self.g.get_edge_data(edge[0],
+                                                                                                           edge[
+                                                                                                               1]).values())
+
+    def ModifyWeightsToUnitScaleFromEdges(self):
+            """
+            :param g:
+            :return:
+            """
+
+            self.printGraph()
+
+            for node in self.g.nodes():
+                weightSum = 0.0
+                for edge in self.g.out_edges(node):
+                    weightSum += self.g.get_edge_data(edge[0], edge[1]).get('weight')
+                for edge in self.g.out_edges(node):
+                    weight = self.g.get_edge_data(edge[0], edge[1]).get('weight') / weightSum
+                    self.g.add_weighted_edges_from([(edge[0], edge[1], weight)], color='red')
+
+            print ("After modification")
+            self.printGraph()
     # TODO (stats function to determine the highest Influence/Passivity Values)
